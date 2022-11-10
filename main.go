@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 
+	"GinJwt/middleware"
 	"GinJwt/models"
 	token "GinJwt/token"
 )
@@ -80,6 +83,27 @@ func main() {
 		}
 		fmt.Printf("result: %v\n", result)
 		c.JSON(http.StatusOK, gin.H{"msg": "created"})
+	})
+
+	app.GET("/test", func(c *gin.Context) {
+		//token := c.Request.Header["Authorization"]
+		tokenString := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte("secret"), nil
+		})
+		if err != nil || !token.Valid {
+			fmt.Println(err)
+			c.JSON(http.StatusBadRequest, gin.H{"msg": err})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"msg": token})
+	})
+
+	app.GET("/test2", middleware.JwtRequired(false), func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"msg": "hello!"})
 	})
 	app.Run(":4000")
 }

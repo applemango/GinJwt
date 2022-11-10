@@ -16,6 +16,7 @@ func GenerateTokenAccess(sub int, name string) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = sub
 	claims["name"] = name
+	claims["refresh"] = false
 	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 
 	// Generate encoded token and send it as response.
@@ -39,6 +40,7 @@ func GenerateTokenPair(sub int, name string) (map[string]string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = sub
 	claims["name"] = name
+	claims["refresh"] = false
 	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 
 	// Generate encoded token and send it as response.
@@ -51,6 +53,7 @@ func GenerateTokenPair(sub int, name string) (map[string]string, error) {
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
 	rtClaims := refreshToken.Claims.(jwt.MapClaims)
 	rtClaims["sub"] = sub
+	rtClaims["refresh"] = true
 	rtClaims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	rt, err := refreshToken.SignedString([]byte("secret"))
