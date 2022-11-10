@@ -9,9 +9,6 @@ import (
 
 func Login(username string, password string) (map[string]string, error) {
 
-	/*username := "test"
-	password := "test"*/
-
 	if username == "test" && password == "test" {
 		tokens, err := GenerateTokenPair()
 		if err != nil {
@@ -23,7 +20,6 @@ func Login(username string, password string) (map[string]string, error) {
 }
 
 func RefreshToken(refresh_token string) (string, error) {
-	//refresh_token := ""
 
 	// Parse takes the token string and a function for looking up the key.
 	// The latter is especially useful if you use multiple keys for your application.
@@ -51,7 +47,6 @@ func RefreshToken(refresh_token string) (string, error) {
 				return "", err
 			}
 			return newTokenPair, nil
-			//return c.JSON(http.StatusOK, newTokenPair)
 		}
 
 		return "", errors.New("error")

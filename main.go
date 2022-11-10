@@ -13,37 +13,6 @@ func main() {
 
 	app := gin.Default()
 
-	/*app.GET("/url/get", func(c *gin.Context) {
-		id := c.Query("id")
-		intId, err_change := strconv.Atoi(id)
-		data, err_get := models.GetUrl(intId)
-		if id == "" || err_change != nil || err_get != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"id":  -1,
-				"url": "https://example.com",
-			})
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"id":  data.Id,
-			"url": data.Url,
-		})
-	})*/
-	/*app.POST("/url/create", func(c *gin.Context) {
-		var u postUrl
-		if c.ShouldBind(&u) != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"id":  -1,
-				"url": "https://example.com",
-			})
-		}
-		add(u.Url)
-		url, _ := models.GetLastUrl()
-		c.JSON(http.StatusOK, gin.H{
-			"id":  url.Id,
-			"url": url.Url,
-		})
-	})*/
-
 	app.POST("/login", func(c *gin.Context) {
 		type postUser struct {
 			Username string `form:"username"`
