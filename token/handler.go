@@ -4,13 +4,22 @@ import (
 	"errors"
 	"fmt"
 
+	"GinJwt/models"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
 func Login(username string, password string) (map[string]string, error) {
+	user, err := models.GetUserFromUsername(username)
+	//user, err := models.GetUserFromId(1)
+	if err != nil {
+		return nil, errors.New("user not found or invalid password")
+	}
+	fmt.Println(username, user.Username)
+	fmt.Println(password, user.Password)
 
-	if username == "test" && password == "test" {
-		tokens, err := GenerateTokenPair()
+	if username == user.Username && password == user.Password {
+		tokens, err := GenerateTokenPair(user.Id, user.Username)
 		if err != nil {
 			return nil, err
 		}
@@ -40,9 +49,15 @@ func RefreshToken(refresh_token string) (string, error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Get the user record from database or
 		// run through your business logic to verify if the user can log in
-		if int(claims["sub"].(float64)) == 1 {
 
-			newTokenPair, err := GenerateTokenAccess()
+		user, error := models.GetUserFromId(int(claims["sub"].(float64)))
+		if error != nil {
+			return "", errors.New("user not found or invalid password")
+		}
+
+		if int(claims["sub"].(float64)) == user.Id {
+
+			newTokenPair, err := GenerateTokenAccess(user.Id, user.Username)
 			if err != nil {
 				return "", err
 			}
