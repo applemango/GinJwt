@@ -39,7 +39,6 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"msg": err})
 			return
 		}
-		fmt.Printf("token: %v\n", token)
 		c.JSON(http.StatusOK, gin.H{"token": token})
 	})
 
@@ -58,7 +57,6 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"msg": "error"})
 			return
 		}
-		fmt.Printf("token: %v\n", token)
 		c.JSON(http.StatusOK, gin.H{"token": token})
 	})
 
@@ -76,17 +74,15 @@ func main() {
 		user.Password = u.Password
 		user.Username = u.Username
 
-		result, err := models.InsertUser(user)
+		_, err := models.InsertUser(user)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"msg": err})
 			return
 		}
-		fmt.Printf("result: %v\n", result)
 		c.JSON(http.StatusOK, gin.H{"msg": "created"})
 	})
 
 	app.GET("/test", func(c *gin.Context) {
-		//token := c.Request.Header["Authorization"]
 		tokenString := strings.Split(c.Request.Header["Authorization"][0], " ")[1]
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -111,7 +107,7 @@ func main() {
 			return []byte("secret"), nil
 		})
 		if err != nil || !token.Valid {
-			c.JSON(http.StatusBadRequest, gin.H{"msg": err})
+			c.JSON(http.StatusOK, gin.H{"msg": err})
 			return
 		}
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"GinJwt/models"
+	"GinJwt/security"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -14,10 +15,7 @@ func Login(username string, password string) (map[string]string, error) {
 	if err != nil {
 		return nil, errors.New("user not found or invalid password")
 	}
-	fmt.Println(username, user.Username)
-	fmt.Println(password, user.Password)
-
-	if username == user.Username && password == user.Password {
+	if username == user.Username && security.CheckHash(password, user.Password) {
 		tokens, err := GenerateTokenPair(user.Id, user.Username)
 		if err != nil {
 			return nil, err
@@ -35,7 +33,6 @@ func RefreshToken(refresh_token string) (string, error) {
 		return []byte("secret"), nil
 	})
 
-	fmt.Println(refresh_token, token, err)
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 
 		user, error := models.GetUserFromId(int(claims["sub"].(float64)))

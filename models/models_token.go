@@ -18,7 +18,6 @@ func TokenInTokenBlockList(token string) bool {
 		return false
 	}
 	result, err := GetTokenBlockListFromSignature(tokenData.Signature)
-	fmt.Println("token :", result.Signature, err, result.Id)
 	if err != nil || result.Id == 0 {
 		return false
 	} else {
@@ -31,7 +30,6 @@ func GetTokenBlockListFromSignature(signature string) (TokenBlockList, error) {
 	token := TokenBlockList{}
 	var err error
 	if err = row.Scan(&token.Id, &token.Signature, &token.Token, &token.UserId); err == sql.ErrNoRows {
-		//fmt.Println("not found")
 		return TokenBlockList{}, err
 	}
 	return token, nil

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"GinJwt/security"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -33,7 +35,6 @@ func GetUserFromUsername(username string) (User, error) {
 		fmt.Println("not found")
 		return User{}, err
 	}
-	fmt.Println(user.Id, user.Username, user.Password)
 	return user, nil
 }
 
@@ -69,7 +70,12 @@ func InsertUser(newUser User) (bool, error) {
 		return false, err
 	}
 
-	_, err = stmt.Exec(newUser.Username, newUser.Password)
+	hash, err := security.Hash(newUser.Password)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = stmt.Exec(newUser.Username, hash)
 	if err != nil {
 		return false, err
 	}
