@@ -19,7 +19,6 @@ func JwtRequired(refresh bool) gin.HandlerFunc {
 			}
 			return []byte("secret"), nil
 		})
-		fmt.Println(models.TokenInTokenBlockList(tokenString))
 		if err != nil || !token.Valid || (!refresh && token.Claims.(jwt.MapClaims)["refresh"] == true) || models.TokenInTokenBlockList(tokenString) {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid token"})
 			c.Abort()
